@@ -33,6 +33,6 @@ try:
     net = network.CubeGraph(nodes, green, red)
     net.createAll()
     net.save_graph(os.path.join(out_dir,'test.png'))
-except e:
+except Exception as e:
     print (e)
     

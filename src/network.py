@@ -7,14 +7,14 @@ class Graph:
     """
     create and visualize a graph using networkx
     """
-    def __init__(self):
+    def __init__(self, out_width = 200, out_height = 80):
         """
         basic constructor
         """
         
         self.G = nx.MultiDiGraph()
-        self.IMAGE_WIDTH= 200
-        self.IMAGE_HEIGHT = 80
+        self.IMAGE_WIDTH= out_width
+        self.IMAGE_HEIGHT = out_height
         self.edgesColor = []
         self.edgesList = dict()
 
@@ -100,10 +100,10 @@ class Graph:
         ax = plt.gca()
         
         # Compute position of nodes
-        pos = nx.kamada_kawai_layout(self.G)
+        pos = nx.kamada_kawai_layout(self.G, scale = 0.5)
         # Draw nodes and edges
-        nx.draw_networkx_nodes(self.G, pos, labels = list(self.G.nodes))
-        nx.draw_networkx_labels(self.G, pos, {n: n for n in list(self.G.nodes)}, font_size=10)
+        nx.draw_networkx_nodes(self.G, pos, labels = list(self.G.nodes), node_size=10000)
+        nx.draw_networkx_labels(self.G, pos, {n: n for n in list(self.G.nodes)}, font_size=100)
         
         """
         nx.draw_networkx_edges(
@@ -151,9 +151,9 @@ class Graph:
         self._prepareOutput()
         
         fname=os.path.splitext(filename)[0]
-
+        fname = fname[0:fname.rfind(os.path.sep)]
         if not os.path.exists(fname):
-            raise Exception('directory: {} does not exist or cannot be written')
+            raise Exception('directory: {0} does not exist or cannot be written'.format(fname))
         plt.savefig(filename)
         
 

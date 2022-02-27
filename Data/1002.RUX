@@ -1,0 +1,445 @@
+#Region System
+FEEDSTRINGS;
+SKIPCHECK;
+#EndRegion
+
+
+#===================================
+# GOP % -     ######################### REVISAR######################
+#===================================
+			
+['Meses':'Total Meses','Medidas Parametros Aplicacion':'% GOP']= C:  1 - ((['G006','Importe Pto'] + ['G007','Importe Pto'] + ['G008','Importe Pto'] + ['G009','Importe Pto'] + ['G010','Importe Pto'] + ['G011','Importe Pto']) \ ( ['G001','Importe Pto'] + ['G002','Importe Pto']));
+
+#=====================================
+# TRAEMOS DATOS PARA GOP DE CB 1007 P&G Hotel Ppto																
+#=====================================				
+
+['Escenario':{'Ppto T+1','Real T-1','Ppto T','Proy T'},'Version T','GOP'] = N: DB('1007 P&G Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Version D',ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto, 'M Ppto'),'Importe',!Meses);
+
+
+#===================================
+# GOP % -     ######################### REVISAR######################
+#===================================
+
+#=======================================
+# TRAEMOS DATOS PARA CHECK DE VALIDACIONES DE CB 1005
+#=======================================
+
+['Version T','Importe Pto','Check','Escenario':{'Ppto T+1','Proy T'}] = S: IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Parametros Concepto','Texto') @<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Parametros Concepto','Texto'),
+IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Ppto','Texto')@<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Ppto','Texto'),
+ IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Detalle','Texto') @<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Detalle','Texto'),CONTINUE)));
+
+['Version T','Importe Pto','Check EN','Escenario':{'Ppto T+1','Proy T'}] = S: IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Parametros Concepto','Texto EN') @<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Parametros Concepto','Texto EN'),
+IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Ppto','Texto EN')@<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Ppto','Texto EN'),
+ IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Detalle','Texto EN') @<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Detalle','Texto EN'),CONTINUE)));
+
+
+#=========   VALIDACION CHECK ============#
+['Version':'Version T','Importe Pto','Check','Escenario':{'Ppto T+1','Proy T'}] = S: IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Parametros Concepto','Texto') @<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Parametros Concepto','Texto'),
+IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Ppto','Texto')@<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Ppto','Texto'),
+IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Regimen','Texto')@<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Regimen','Texto'),
+IF(DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Detalle','Texto') @<> '',DB('1005 Validacion Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hoja Detalle','Texto'),CONTINUE))));
+ 
+
+
+#===================================
+# DATOS SEGUN COMPLEJO U HOTEL				
+#===================================
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Ajuste','Ajuste %','Base'},'Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'}]= N:   
+	IF(DB('}ElementAttributes_Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'COMPLEJO') @= '' & 
+	DB('}ElementAttributes_Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'HOTEL_COM_1') @= '',
+		CONTINUE,
+			IF(ATTRS('PCK Complejo',DB('1000 Conceptos Hotel Ppto',DB('}ElementAttributes_Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'COMPLEJO'),!Conceptos Hotel Ppto,!Escenario,'Complejo/Hotel') ,'ID') @='1' &
+			 DB('}ElementAttributes_Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'COMPLEJO') @<> '' ,
+				0,
+					CONTINUE));
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Ajuste','Ajuste %','Base'},'Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'}]= N:   
+	IF(DB('}ElementAttributes_Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'HOTEL_COM_1') @<> '',
+		IF(ATTRS('PCK Complejo',DB('1000 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Complejo/Hotel') ,'ID') @='2' ,
+			0,
+				CONTINUE),
+					CONTINUE);
+
+#=====================================				
+# DATOS APP COMERCIAL CB 0160 Comercial Ppto Cambio			
+#=====================================								
+
+#['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Ajuste','Ajuste %'},'Version T']=N: IF(DIMIX('Conceptos Comercial Ppto',!Conceptos Hotel Ppto)<>0 &
+#	ATTRS('PCK SiNo',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Permitir Ajuste Hotel'),'ID')@='1',
+#	CONTINUE,
+#		CONTINUE);
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Base'},'Version T']=N: IF(DIMIX('Conceptos Comercial Ppto',!Conceptos Hotel Ppto)<>0,
+	DB('0160 Comercial Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hotel','Version Cambio','Importe Pto',!Meses),
+		CONTINUE);
+
+#=====================================
+# DATOS APP COMERCIAL CB 0162 Seguros Cambio			
+#=====================================								
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Base'},'Version T']=N: IF(DIMIX('Conceptos Seguros Ppto',!Conceptos Hotel Ppto)<>0,
+	DB('0162 Seguros Cambio',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hotel','Version Cambio','Importe Pto',!Meses),
+		CONTINUE);
+
+#=====================================								
+# DATOS APP COMERCIAL CB 0163 Informatica Cambio			
+#=====================================								
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Base'},'Version T']=N: IF(DIMIX('Conceptos Informatica Ppto',!Conceptos Hotel Ppto)<>0,
+	DB('0163 Informatica Cambio',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hotel','Version Cambio','Importe Pto',!Meses),
+		CONTINUE);															
+
+#===================================
+# DATOS APP RSC		CB 0164 RSC Cambio		
+#===================================								
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Base'},'Version T']=N: IF(DIMIX('Conceptos RSC Ppto',!Conceptos Hotel Ppto)<>0,
+	DB('0164 RSC Cambio',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hotel','Version Cambio','Importe Pto',!Meses),
+		CONTINUE);
+
+#===================================
+# DATOS APP Alquileres		CB 0165 Alquileres Cambio		
+#===================================								
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Base'},'Version T']=N: IF(DIMIX('Conceptos Amortizaciones Impuestos y Otros Ppto',!Conceptos Hotel Ppto)<>0,
+	DB('0165 Alquileres Cambio',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hotel','Version Cambio','Importe Pto',!Meses),
+		CONTINUE);
+									
+
+#===================================
+# DATOS APP Amortizaciones		CB 0166 Amortizaciones Impuestos y Otros Cambio		
+#===================================								
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Base'},'Version T']=N: IF(DIMIX('Conceptos Amortizaciones Impuestos y Otros Ppto',!Conceptos Hotel Ppto)<>0,
+	DB('0166 Amortizaciones Impuestos y Otros Cambio',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Hotel','Version Cambio','Importe Pto',!Meses),
+		CONTINUE);
+
+#=====================================
+# CALCULO DE CONCEPTOS 220 BBO
+#=====================================
+
+['Escenario':{'Ppto T+1'},'Version T','Medidas Parametros Aplicacion':{'Ajuste','Ajuste %','Base'}] = N: IF(ATTRS('Conceptos Ppto',!Conceptos Hotel Ppto,'BBO') @='S',0,CONTINUE);
+
+['Escenario':{'Ppto T+1'},'Version T','Importe Pto'] = N: IF(ATTRS('Conceptos Ppto',!Conceptos Hotel Ppto,'BBO') @='S',DB('1041 Hotel Ppto Conceptos BBO',!Estructura Hotel Centro-Empresa Ppto,'GG00','Total Impuestos',!Conceptos Hotel Ppto,!Escenario,!Meses),CONTINUE);
+
+
+
+#===================================
+# DATOS APP Impuestos y Tasas			
+#===================================
+
+#= IMPUESTO REPUBLICA DOMINICANA - SGAE	2350							
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Ajuste','Ajuste %'},'Version T','2350']=N: 
+	IF(ELISANC('Estructura Hotel Centro-Empresa Ppto','RDM',!Estructura Hotel Centro-Empresa Ppto)=1,
+		0,
+			CONTINUE);
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Base'},'Version T','2350']=N:
+	IF(ELISANC('Estructura Hotel Centro-Empresa Ppto','RDM',!Estructura Hotel Centro-Empresa Ppto)=1,
+		((DB('0204 Parametros Comercial Ppto',ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'ID_HOTEL'),!Escenario,'Version D','Habitaciones','Importe Pto',!Meses) \
+		DB('0204 Parametros Comercial Ppto',ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'ID_HOTEL'),!Escenario,'Version D','Dias Abiertos','Importe Pto',!Meses)) *
+		DB('0087 Impuestos y Tasas Centro',ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'ID_HOTEL'),!Escenario,'Version D','61',!Meses))\DB('0050 Tipo de Cambio',!Escenario,'DOP','USD','Version T',!Meses,'1'),
+			CONTINUE);
+
+#= IMPUESTO MARRUECOS 2338
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Base'},'Version T','2338']=N:
+	IF(ELISANC('Estructura Hotel Centro-Empresa Ppto','MAR',!Estructura Hotel Centro-Empresa Ppto)=1,
+		DB('0087 Impuestos y Tasas Centro',ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'ID_HOTEL'),!Escenario,'Version D','60',!Meses) *  DB('1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'390',!Escenario,'Version D','Importe Pto',!Meses)\100,
+			CONTINUE);
+
+#===================================
+# AJUSTES PERMITIR AJUSTES NO		
+#===================================											
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Ajuste','Ajuste %'},'Version T']=N: IF(ATTRS('PCK SiNo',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Permitir Ajuste Hotel'),'ID')@='1',
+	CONTINUE,
+		0);
+
+#===================================
+# IMPORTE DIRECTO SI O NO (DES DE CRITERIOS PPTO)	
+#===================================											
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Ajuste Extraordinario'},'Version T']=N: IF(ATTRS('PCK SiNo',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Importe Directo'),'ID')@='1',
+	CONTINUE,
+		0);
+
+
+
+#===================================
+# MESES CERRADOS PROY T			
+#===================================
+
+['Proy T','Medidas Parametros Aplicacion':{'Ajuste','Ajuste %','Base','Ajuste Extraordinario'},'Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'}]= N:  IF(DB('0013 Estado Escenarios','Proy T',!Meses,'Value')@='Real',
+	0,
+		CONTINUE);
+
+['Importe Pto','Proy T','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'}]= N:   IF(DB('0013 Estado Escenarios',!Escenario,!Meses,'Value')@='Real',												
+	DB('1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,'Real T','Version D','Importe Pto',!Meses),
+		CONTINUE);
+
+#=========   BASE PRESUPUESTO ============#
+
+##### HOJA DE DETALLE #####
+
+['Base','Ppto T+1'] = N: IF( ATTRS('PCK Criterio de Calculo',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo'), 'ID') @='2',
+ 	DB('1003 Hoja de Detalle Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto ,!Conceptos Hotel Ppto,'Total Contador',!Escenario,!Version,'M Ppto','Total',!Meses),
+		CONTINUE);
+
+['Base','Proy T'] = N: IF( ATTRS('PCK Criterio de Calculo',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo'), 'ID') @='2',  
+	DB('1003 Hoja de Detalle Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,'Total Contador',!Escenario,!Version,'M Ppto','Total',!Meses),
+		CONTINUE);
+
+##### HOJA DE REGIMEN #####
+
+['Base','Ppto T+1'] = N: IF( ATTRS('PCK Criterio de Calculo',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo'), 'ID') @='3',
+ 	DB('1006 Hoja de Regimen Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,'Total Contador',!Escenario,!Version,'Total',!Meses),
+		CONTINUE);
+
+['Base','Proy T'] = N: IF( ATTRS('PCK Criterio de Calculo',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo'), 'ID') @='3',
+ 	DB('1006 Hoja de Regimen Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,'Total Contador',!Escenario,!Version,'Total',!Meses),
+		CONTINUE);
+
+#=======================================================================================================================================================================================================================
+# CONCEPTOS PERSONAL			
+#=======================================================================================================================================================================================================================
+
+#=======================
+# CONCEPTOS SALARIOS				
+#=======================
+
+
+['Base','Ppto T+1','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'}] = N: IF( DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo') @='Escalas x Personal' % 
+                                            DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo') @='Scales x Personal' &
+			ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'MARCA_EMP_SERVICIO_INTERNO')@<>'S',
+	DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,DB('}ElementAttributes_Conceptos Ppto',!Conceptos Hotel Ppto,'SECCION PERSONAL'),!Escenario,'M Ppto','Coste Salarial Final',!Meses),
+								CONTINUE);
+
+#=======================
+# CONCEPTOS SALARIOS ETT
+#=======================
+
+
+['Base','Ppto T+1','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'}] = N: IF( DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo') @='Escalas x Personal' % 
+                                           	 DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo') @='Scales x Personal',								
+	DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,DB('}ElementAttributes_Conceptos Ppto',!Conceptos Hotel Ppto,'SECCION PERSONAL ETT'),!Escenario,'M Ppto','Coste Salarial Final ETT',!Meses),								
+								CONTINUE);
+
+#==========================
+# CONCEPTOS SALARIOS MARCA ARUBA				
+#==========================		
+
+['Base','Ppto T+1','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'}] = N: IF( DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo') @='Escalas x Personal' % 
+                                            DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo') @='Scales x Personal' &
+			ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'MARCA_EMP_SERVICIO_INTERNO')@='S',
+					0,
+								CONTINUE);												
+
+
+
+											
+								
+
+#=======================
+# SEGURIDAD SOCIAL
+#=======================
+
+['Base','Ppto T+1','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'},'1040','Version':'Version T'] = N:IF(	ATTRS('PCK Flag Calculo Seguridad Social',DB('0174 Parametros Personal Mensual Centro-Empresa Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio',!Meses,'Flag Calculo SS'),'ID')@='1',																	
+													(DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'TOTAL SECCION',!Escenario,'M Ppto','Coste Salarial Final',!Meses) +
+													 DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'TOTAL SECCION',!Escenario,'M Ppto','Coste Feriados',!Meses) +
+													 DB('1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'800',!Escenario,!Version,'Importe Pto',!Meses) + 
+													 DB('1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'910',!Escenario,!Version,'Importe Pto',!Meses) + 
+													 DB('1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'1020',!Escenario,!Version,'Importe Pto',!Meses)) * 
+													(DB('0174 Parametros Personal Mensual Centro-Empresa Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio',!Meses,'1.1 % SS') +
+													 DB('0174 Parametros Personal Mensual Centro-Empresa Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio',!Meses,'2.1 % SS') +
+													 DB('0174 Parametros Personal Mensual Centro-Empresa Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio',!Meses,'3.1 % SS') +
+													 DB('0174 Parametros Personal Mensual Centro-Empresa Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio',!Meses,'4.1 % SS') +
+													 DB('0174 Parametros Personal Mensual Centro-Empresa Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio',!Meses,'5.1 % SS') )\100,
+														DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'TOTAL SECCION',!Escenario,'M Ppto','Seguridad Social Base',!Meses));
+
+#=======================
+# COSTE VACACIONES
+#=======================												
+	
+['Base','Ppto T+1','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'},'910','Version':'Version T'] = N:IF(	ATTRS('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo'),'ID')@='4',
+													((DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'TOTAL SECCION',!Escenario,'M Ppto','Coste Salarial Final',!Meses) +
+													DB('1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'1020',!Escenario,!Version,'Importe Pto',!Meses))\
+													DB('0174 Parametros Personal Mensual Centro-Empresa Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio',!Meses,'Dias del mes'))*
+													((DB('0174 Parametros Personal Mensual Centro-Empresa Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio',!Meses,'Dias Vacaciones Anuales') \ 
+													12) +
+													DB('0174 Parametros Personal Mensual Centro-Empresa Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio',!Meses,'Dias Feriados')),
+														CONTINUE);	
+#=======================
+# COSTE DEVENGOS
+#=======================
+
+['Base','Ppto T+1','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'},'800','Version':'Version T'] = N:IF(	ATTRS('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo'),'ID')@='4',								
+													DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'TOTAL SECCION',!Escenario,'M Ppto','Devengo Base',!Meses) +
+													DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'TOTAL SECCION',!Escenario,'M Ppto','Devengo por Factor',!Meses),															
+														CONTINUE);
+#=======================
+# COSTE DESPLAZADO
+#=======================
+['Base','Ppto T+1','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'},'698','Version':'Version T'] = N:IF(	ATTRS('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo'),'ID')@='4' &
+												ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'MARCA_EMP_SERVICIO_INTERNO')@<>'S',			
+													DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'TOTAL SECCION',!Escenario,'M Ppto','Sueldo Desplazado',!Meses),
+														CONTINUE);
+
+['Base','Ppto T+1','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'},'698','Version':'Version T'] = N:IF(	ATTRS('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo'),'ID')@='4'&
+												ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'MARCA_EMP_SERVICIO_INTERNO')@='S',	
+													DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'TOTAL SECCION',!Escenario,'M Ppto','Sueldo Desplazado',!Meses) +
+													DB('1040 Calculos Salariales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'TOTAL SECCION',!Escenario,'M Ppto','Coste Salarial Final',!Meses),
+														CONTINUE);
+													
+
+
+#=======================
+# COSTE COMIDA PERSONAL
+#=======================
+	
+['Base','Ppto T+1','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'},'1030','Version':'Version T'] = N:
+	DB('1037 Coste Comida Personal Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,!Version,'Coste Comida/PAX',!Meses) *
+	DB('1037 Coste Comida Personal Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,!Version,'Dias del Mes Comida Personal',!Meses) *
+	DB('1037 Coste Comida Personal Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,!Version,'PAX',!Meses);								
+	
+#===================================
+# CONCEPTOS COSTE COMIDA Y COSTE BEBIDA - 370								
+#===================================
+
+['Escenario':{'Ppto T+1','Proy T'},'Conceptos Hotel Ppto':'370','Version':'Version T','Medidas Parametros Aplicacion':'Coste Dias Especiales','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'}]= N:
+		IF(!Meses @='12',
+			((DB('1022 Dias Especiales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'24','Clientes') + DB('1022 Dias Especiales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'24','Empleados')) * DB('1022 Dias Especiales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'24','Precio'))+ ((DB('1022 Dias Especiales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'31','Clientes') + DB('1022 Dias Especiales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'31','Empleados')) * DB('1022 Dias Especiales Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'31','Precio')) 				,															
+					0);
+
+['Importe Pto','Escenario':{'Ppto T+1','Proy T'},'Conceptos Hotel Ppto':'370'] = N: ['Base'] + (['Base'] * (['Ajuste %']\100) ) + ['Ajuste'] + ['Coste Dias Especiales'];
+								
+
+
+#=====================================
+# MESES ABIERTOS PROY T Y PPTO T+1
+#=====================================
+
+#################### IMPORTE DIRECTO ########################
+['Importe Pto','Escenario':{'Ppto T+1','Proy T'},'Version T']=N:IF(DIMNM('PCK Criterio de Calculo Hotel',DIMIX('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo')))@<>'5' &
+							DIMNM('PCK Criterio de Calculo Hotel',DIMIX('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo')))@<>'8',
+		(['Base']+(['Base']*(['Ajuste %']\100))+['Ajuste'])+['Ajuste Extraordinario'],
+		CONTINUE);
+
+['Importe Pto','Escenario':{'Ppto T+1', 'Proy T'},'Version T']=N:IF(DIMNM('PCK Criterio de Calculo Hotel',DIMIX('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo')))@='5',
+		
+		['Base']*DB('0158 Parametros Comercial Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio','Estancias','Importe Pto',!Meses)*( 1 +['Ajuste %']\100)
+		+
+		['Ajuste']*DB('0158 Parametros Comercial Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio','Estancias','Importe Pto',!Meses)
+		+['Importe Directo']
+		,CONTINUE);
+
+['Importe Pto','Escenario':{'Ppto T+1', 'Proy T'},'Version T']=N:IF(DIMNM('PCK Criterio de Calculo Hotel',DIMIX('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo')))@='8',
+		
+		['Base']*DB('0158 Parametros Comercial Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio','Habitaciones','Importe Pto',!Meses)*( 1 +['Ajuste %']\100)
+		+
+		['Ajuste']*DB('0158 Parametros Comercial Ppto Cambio',!Estructura Hotel Centro-Empresa Ppto,!Escenario,'Hotel','Version Cambio','Habitaciones','Importe Pto',!Meses)
+		+['Importe Directo']
+		,CONTINUE);
+
+['Importe Pto Aux','Escenario':{'Ppto T+1', 'Proy T'},'Version T']=N:IF(DIMNM('PCK Criterio de Calculo Hotel',DIMIX('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo')))@='5',
+	['Base']+(['Base']*(['Ajuste %']\100))+['Ajuste'],CONTINUE);
+
+['Importe Pto Aux','Escenario':{'Ppto T+1', 'Proy T'},'Version T']=N:IF(DIMNM('PCK Criterio de Calculo Hotel',DIMIX('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo')))@='8',
+	['Base']+(['Base']*(['Ajuste %']\100))+['Ajuste'],CONTINUE);
+			
+['Medidas Parametros Aplicacion':'Importe sobre Estancia']=N:['Importe Pto']\DB('0158 Parametros Comercial Ppto Cambio',ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'ID_HOTEL'),!Escenario,'Hotel','Version Cambio','Estancias','Importe Pto',!Meses);
+
+['Medidas Parametros Aplicacion':'Importe/Habitación']=N:['Importe Pto']\DB('0158 Parametros Comercial Ppto Cambio',ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'ID_HOTEL'),!Escenario,'Hotel','Version Cambio','Habitaciones','Importe Pto',!Meses);
+
+
+#Ajuste %
+['Medidas Parametros Aplicacion':'Ajuste %','Meses' : 'Total Meses'] = ConsolidatedAvg(2,'1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,!Version,!Medidas Parametros Aplicacion,!Meses);
+
+#Base y Ajuste
+['Medidas Parametros Aplicacion':{'Base', 'Ajuste'},'Meses':'Total Meses']=IF( DIMNM('PCK Criterio de Calculo Hotel',DIMIX('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo')))@='5'
+	, ConsolidatedAvg(2,'1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,!Version,!Medidas Parametros Aplicacion,!Meses)
+	, CONTINUE
+);
+
+#Total meses
+['Total Meses']= IF( DIMNM('Medidas Parametros Aplicacion',DIMIX('Medidas Parametros Aplicacion',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,!Medidas Parametros Aplicacion)))@='Importe sobre Habitacion'
+					% DIMNM('Medidas Parametros Aplicacion',DIMIX('Medidas Parametros Aplicacion',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,!Medidas Parametros Aplicacion)))@='Importe sobre Estancia'
+					% DIMNM('Medidas Parametros Aplicacion',DIMIX('Medidas Parametros Aplicacion',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,!Medidas Parametros Aplicacion)))@='Importe Pto'
+	, ConsolidatedAvg(2,'1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,!Version,!Medidas Parametros Aplicacion,!Meses)
+	, CONTINUE
+);
+
+								
+
+#SE TIENE QUE EDITAR CUANDO EL CUBO DE VALIDACIONES ESTE ESTRUCTURADO CORRECTAMENTE ########################################################################
+#######################################################################################################################################
+#['Version T','Importe Pto','Check','Escenario':{'Ppto T+1','Proy T'}] = S: 
+#	IF(DB('0404 Validacion Seguros',!Estructura Seguros Centro-Empresa,!Conceptos Seguros Ppto,!Escenario,'Parametros Concepto','Texto') @<> '',
+#		DB('0404 Validacion Seguros',!Estructura Seguros Centro-Empresa,!Conceptos Seguros Ppto,!Escenario,'Parametros Concepto','Texto'),
+#			IF(DB('0404 Validacion Seguros',!Estructura Seguros Centro-Empresa,!Conceptos Seguros Ppto,!Escenario,'Hoja Ppto','Texto')@<> '',
+#				DB('0404 Validacion Seguros',!Estructura Seguros Centro-Empresa,!Concepto				s Seguros Ppto,!Escenario,'Hoja Ppto','Texto'),
+#					IF(DB('0404 Validacion Seguros',!Estructura Seguros Centro-Empresa,!Conceptos Seguros Ppto,!Escenario,'Hoja Detalle','Texto') @<> '',
+#						DB('0404 Validacion Seguros',!Estructura Seguros Centro-Empresa,!Conceptos Seguros Ppto,!Escenario,'Hoja Detalle','Texto'),
+#							CONTINUE)));
+#######################################################################################################################################
+#######################################################################################################################################
+
+#=====================================
+# CONCEPTOS CON ESCALAS ENERGÍA CB 1051
+#=====================================
+
+['Escenario':{'Ppto T+1'},'Version':'Version T','Medidas Parametros Aplicacion':'Base']=N:IF(DIMNM('PCK SiNo',DIMIX('PCK SiNo',DB('0025 Definicion Conceptos Hotel Ppto',!Conceptos Hotel Ppto,'Gastos Generales')))@='1'
+	& DIMNM('PCK SiNo',DIMIX('PCK SiNo',DB('}ElementAttributes_Conceptos Hotel Ppto',!Conceptos Hotel Ppto,'ESCALAS')))@='1' &  DIMNM('PCK Criterio de Calculo Hotel',DIMIX('PCK Criterio de Calculo Hotel',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Criterio de Calculo')))@='4',
+		DB('1051 Calculo Energia',!Estructura Hotel Centro-Empresa Ppto,!Escenario,!Conceptos Hotel Ppto,!Meses,'Coste Decalado'),
+		CONTINUE);								
+
+					
+#=====================================
+# Version D a version T
+#=====================================
+
+#['Real T','Version T','Importe Pto'] = DB('1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,'Real T','Version D',!Medidas Parametros Aplicacion,!Meses);
+
+
+FEEDERS;
+
+
+
+['Ppto T+1','Version T','Importe Pto']=>DB(IF(DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Concepto BBO') @<> '','1041 Hotel Ppto Conceptos BBO',''),!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,'Total Impuestos',ATTRS('Conceptos BBO Ppto',DB('1001 Conceptos Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,'Concepto BBO'),'Caption') ,'Ppto T+1',!Meses);
+
+
+['Medidas Parametros Aplicacion':'Importe Pto']=>['Importe sobre Estancia'];
+
+['Version T','Base']=>['Version T','Importe Pto'];
+['Version T','Ajuste %']=>['Version T','Importe Pto'];
+['Version T','Ajuste']=>['Version T','Importe Pto'];
+['Version T','Coste Dias Especiales']=>['Version T','Importe Pto'];								
+
+['Escenario':'Real T','Importe Pto'] =>['Escenario':'Proy T','Importe Pto'];
+
+['Escenario':{'Ppto T+1','Proy T'},'Importe Pto'] =>DB('1007 P&G Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,!Version,'EUR','Importe',!Meses);
+['Escenario':{'Ppto T+1','Proy T'},'Importe Pto'] =>DB('1007 P&G Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,!Escenario,!Version,'USD','Importe',!Meses);
+
+['Escenario':{'Ppto T+1'},'Version D','Importe Pto'] => DB('1010 Resumen Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,'Ppto T+1','Total Meses');
+['Escenario':{'Proy T'},'Version D','Importe Pto'] => DB('1010 Resumen Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Conceptos Hotel Ppto,'Proy T','Total Meses');
+
+['Escenario':{'Ppto T+1','Proy T'},'Medidas Parametros Aplicacion':{'Importe Pto'},'Version T','390']=>DB(IF(ELISANC('Estructura Hotel Centro-Empresa Ppto','MAR',!Estructura Hotel Centro-Empresa Ppto)=1,'1002 Hotel Ppto',''),!Estructura Hotel Centro-Empresa Ppto,'2338',!Escenario,'Version T','Base',!Meses);
+
+['Escenario':{'Ppto T+1','Proy T'},'Version T','Conceptos Hotel Ppto':{'800','910','1020'},'Importe Pto']=>DB('1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'1040',!Escenario,!Version,'Base',!Meses);
+['Escenario':{'Ppto T+1','Proy T'},'Version T','Conceptos Hotel Ppto':{'1020'},'Importe Pto']=>DB('1002 Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,'910',!Escenario,!Version,'Base',!Meses);
+
+#============================================================================
+# CUBO 1201 CALCULO MANAGEMENT
+#============================================================================
+
+['Ppto T+1','Version D','Importe Pto']=>DB('1201 Calculo Management',ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'ID_HOTEL')|'-'|ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'SM1'),DB('1202 Mapping Tipo Management',ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'ID_HOTEL')|'-'|ATTRS('Estructura Hotel Centro-Empresa Ppto',!Estructura Hotel Centro-Empresa Ppto,'SM1'),'Ppto T+1','% s/Ingresos S','Concepto Ingreso'),'Ppto T+1','Base sin decalar',!Meses);
+
+
+#============================================================================
+# CUBO DE SERVICIOS
+#============================================================================
+
+['Escenario':{'Ppto T+1','Proy T'},'Conceptos Hotel Ppto':'SG003','Version':'Version T','Medidas Parametros Aplicacion':'Importe Pto','Meses':{'01','02','03','04','05','06','07','08','09','10','11','12'}]=> DB('1036 Tickets Extras Comedor Hotel Ppto',!Estructura Hotel Centro-Empresa Ppto,!Escenario,!Meses,'Ingresos Eventos');
